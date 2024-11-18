@@ -41,15 +41,27 @@ class DatabaseApp:
             widget.destroy()
 
         # Database connection fields
-        self.db_name = tk.StringVar(value='dbtest')
+        self.db_name = tk.StringVar(value='do_an')
         self.user = tk.StringVar(value='postgres')
         self.password = tk.StringVar(value='1234')
         self.host = tk.StringVar(value='localhost')
         self.port = tk.StringVar(value='5432')
-        self.table_name = tk.StringVar(value='sinhvien')
+        self.table_name = tk.StringVar(value='congnhan')
 
         # Create the main GUI elements
         self.create_widgets()
+        
+         # Add Logout button
+        logout_button = tk.Button(self.root, text="Logout", command=self.logout)
+        logout_button.grid(row=4, column=1, pady=10, sticky="w")
+
+    def logout(self):
+        # Destroy current widgets and return to login screen
+        for widget in self.root.winfo_children():
+            widget.destroy()
+        self.create_login_widgets()
+        
+    
 
     def create_widgets(self):
         # Connection section
@@ -88,17 +100,26 @@ class DatabaseApp:
 
         self.column1 = tk.StringVar()
         self.column2 = tk.StringVar()
+        self.column3 = tk.StringVar()
+        self.column4 = tk.StringVar()
 
         tk.Label(insert_frame, text="Ho ten:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
         tk.Entry(insert_frame, textvariable=self.column1).grid(row=0, column=1, padx=5, pady=5)
 
-        tk.Label(insert_frame, text="MSSV:").grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        tk.Label(insert_frame, text="Diachi:").grid(row=1, column=0, padx=5, pady=5, sticky="w")
         tk.Entry(insert_frame, textvariable=self.column2).grid(row=1, column=1, padx=5, pady=5)
+        
+        tk.Label(insert_frame, text="CCCD:").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+        tk.Entry(insert_frame, textvariable=self.column3).grid(row=2, column=1, padx=5, pady=5)
+        
+        tk.Label(insert_frame, text="SDT:").grid(row=3, column=0, padx=5, pady=5, sticky="w")
+        tk.Entry(insert_frame, textvariable=self.column4).grid(row=3, column=1, padx=5, pady=5)
+        
 
-        tk.Button(insert_frame, text="Insert Data", command=self.insert_data).grid(row=2, columnspan=2, pady=10)
+        tk.Button(insert_frame, text="Insert Data", command=self.insert_data).grid(row=4, columnspan=2, pady=10)
 
         # Data display section on the right
-        self.data_display = tk.Text(self.root, height=20, width=60)
+        self.data_display = tk.Text(self.root, height=20, width=90)
         self.data_display.grid(row=0, column=1, rowspan=3, padx=10, pady=10, sticky="nsew")
 
     def connect_db(self):
@@ -128,8 +149,8 @@ class DatabaseApp:
 
     def insert_data(self):
         try:
-            insert_query = sql.SQL("INSERT INTO {} (MSSV, HoTen) VALUES (%s, %s)").format(sql.Identifier(self.table_name.get()))
-            data_to_insert = (self.column1.get(), self.column2.get())
+            insert_query = sql.SQL("INSERT INTO {} (DiaChi, HoTen, CCCD, SDT) VALUES (%s, %s, %s, %s)").format(sql.Identifier(self.table_name.get()))
+            data_to_insert = (self.column1.get(), self.column2.get(), self.column3.get(), self.column4.get())
             self.cur.execute(insert_query, data_to_insert)
             self.conn.commit()
             messagebox.showinfo("Success", "Data inserted successfully!")
